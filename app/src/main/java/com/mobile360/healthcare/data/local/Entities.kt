@@ -197,3 +197,13 @@ data class DoctorListItem(
     @Embedded val doctor: DoctorEntity,
     val nextSlotMillis: Long?
 )
+
+// CR-001: locally saved feedback / bug report
+@Entity(tableName = "feedback", indices = [Index("ownerId")])
+data class FeedbackEntity(
+    @PrimaryKey val id: String,
+    val ownerId: String,
+    val kind: String,
+    val message: String,
+    val createdMillis: Long,
+)

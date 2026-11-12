@@ -25,6 +25,8 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
+import com.mobile360.healthcare.data.FeedbackRepository
+import com.mobile360.healthcare.data.FeedbackRepositoryImpl
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -47,4 +49,7 @@ abstract class RepositoryModule {
     @Binds abstract fun records(impl: RecordsRepositoryImpl): RecordsRepository
     @Binds abstract fun chat(impl: ChatRepositoryImpl): ChatRepository
     @Binds abstract fun availability(impl: AvailabilityRepositoryImpl): AvailabilityRepository
+
+    // CR-001
+    @Binds abstract fun feedback(impl: FeedbackRepositoryImpl): FeedbackRepository
 }

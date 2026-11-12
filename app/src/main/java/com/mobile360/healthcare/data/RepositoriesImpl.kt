@@ -571,3 +571,27 @@ class AvailabilityRepositoryImpl @Inject constructor(
         return Outcome.ok("Schedule saved. Patients see your new slots now.")
     }
 }
+
+// CR-001: feedback and bug reports stored per signed-in account
+@Singleton
+class FeedbackRepositoryImpl @Inject constructor(
+    private val dao: CareDao,
+    private val store: SessionStore,
+) : FeedbackRepository {
+    @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
+    override fun reports(): kotlinx.coroutines.flow.Flow<List<com.mobile360.healthcare.data.local.FeedbackEntity>> =
+        store.session.flatMapLatest { s ->
+            if (s == null) kotlinx.coroutines.flow.flowOf(emptyList()) else dao.observeFeedback(s.userId)
+        }
+
+    override suspend fun submit(kind: String, text: String): Outcome {
+        val s = store.session.first() ?: return refuse("submit feedback")
+        val message = text.trim()
+        if (message.isEmpty()) return Outcome(ok = false, message = "Please describe your feedback or bug.", id = null)
+        val id = newId("fb")
+        dao.insertFeedback(
+            com.mobile360.healthcare.data.local.FeedbackEntity(id, s.userId, kind, message, System.currentTimeMillis()),
+        )
+        return Outcome(ok = true, message = "Report saved.", id = id)
+    }
+}

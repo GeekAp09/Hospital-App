@@ -49,6 +49,11 @@ import com.mobile360.healthcare.data.model.Role
 
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.material.icons.filled.DarkMode
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.mutableStateOf
 private const val SUPPORT_NUMBER = "1800123456"
 
 @Composable
@@ -163,6 +168,8 @@ fun SettingsScreen(
                 LinkRow(Icons.Filled.Shield, "Security and account", "Device safety, mobile number, account security", onOpenSecurityAndAccount)
             }
 
+            // CR-001: feedback & bug reporter
+            FeedbackSection()
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                 SectionLabel("Help & Support")
                 Text("CareConnect Hospital", style = MaterialTheme.typography.bodySmall, color = scheme.onSurfaceVariant)
@@ -227,5 +234,64 @@ private fun LinkRow(icon: ImageVector, title: String, sub: String, onClick: () -
             Text(sub, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
         Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, null, tint = MaterialTheme.colorScheme.outline)
+    }
+}
+
+// CR-001: feedback & bug reporter section, dialog and the list of saved reports
+@Composable
+private fun FeedbackSection(vm: FeedbackViewModel = hiltViewModel()) {
+    val reports by vm.reports.collectAsStateWithLifecycle()
+    val open by vm.dialogOpen.collectAsStateWithLifecycle()
+    val error by vm.error.collectAsStateWithLifecycle()
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        SectionLabel("Feedback & Bug Reporter")
+        Card(modifier = Modifier.fillMaxWidth()) {
+            Column {
+                LinkRow(Icons.Filled.SupportAgent, "Send feedback or report a bug", "Saved on this device") { vm.openDialog() }
+                HorizontalDivider()
+                Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                    Text("My reports", style = MaterialTheme.typography.titleSmall)
+                    if (reports.isEmpty()) {
+                        Text("No reports yet", style = MaterialTheme.typography.bodyMedium)
+                    } else {
+                        reports.forEach { r ->
+                            Column {
+                                Text(r.kind, style = MaterialTheme.typography.labelMedium)
+                                Text(r.message, style = MaterialTheme.typography.bodyMedium)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    if (open) {
+        var kind by rememberSaveable { mutableStateOf("Feedback") }
+        var text by rememberSaveable { mutableStateOf("") }
+        AlertDialog(
+            onDismissRequest = { vm.closeDialog() },
+            title = { Text("Send feedback or report a bug") },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        listOf("Feedback", "Bug").forEach { k ->
+                            FilterChip(selected = kind == k, onClick = { kind = k }, label = { Text(k) })
+                        }
+                    }
+                    OutlinedTextField(
+                        value = text,
+                        onValueChange = { text = it },
+                        label = { Text("Describe your feedback or bug") },
+                        isError = error != null,
+                        supportingText = { error?.let { Text(it) } },
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = { vm.submit(kind, text) }) { Text("Submit") }
+            },
+            dismissButton = { TextButton(onClick = { vm.closeDialog() }) { Text("Cancel") } },
+        )
     }
 }

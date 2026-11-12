@@ -96,3 +96,9 @@ interface AvailabilityRepository {
     suspend fun conflictCount(rows: List<AvailabilityEntity>): Int
     suspend fun save(rows: List<AvailabilityEntity>): Outcome
 }
+
+// CR-001: feedback and bug reports saved on the device
+interface FeedbackRepository {
+    fun reports(): Flow<List<com.mobile360.healthcare.data.local.FeedbackEntity>>
+    suspend fun submit(kind: String, text: String): Outcome
+}

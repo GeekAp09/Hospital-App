@@ -152,4 +152,11 @@ interface CareDao {
     suspend fun deleteMedicationsOfPatient(patientId: String)
     @Query("DELETE FROM prescriptions WHERE patientId = :patientId") suspend fun deletePrescriptionsOfPatient(patientId: String)
     @Query("DELETE FROM timeline WHERE patientId = :patientId") suspend fun deleteTimelineOfPatient(patientId: String)
+
+    // CR-001: feedback and bug reports
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertFeedback(item: FeedbackEntity)
+
+    @Query("SELECT * FROM feedback WHERE ownerId = :ownerId ORDER BY createdMillis DESC")
+    fun observeFeedback(ownerId: String): Flow<List<FeedbackEntity>>
 }
