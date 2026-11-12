@@ -68,6 +68,8 @@ import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Locale
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 
 private val homeTimeFormat: DateTimeFormatter = DateTimeFormatter.ofPattern("EEE hh:mm a", Locale.getDefault())
 
@@ -135,6 +137,8 @@ fun PatientHomeScreen(
                 verticalArrangement = Arrangement.spacedBy(24.dp)
             ) {
                 UpcomingCard(state, onOpenAppointments)
+                // CR-002: image carousel
+                HomeImageCarousel()
                 Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
                         Text("Clinical Hub", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
@@ -336,6 +340,50 @@ private fun HubCard(
                     Icon(trailing, null, Modifier.size(20.dp), tint = cs.outline)
                 }
                 extra()
+            }
+        }
+    }
+}
+
+// CR-002: horizontally scrollable placeholder image carousel
+@Composable
+private fun HomeImageCarousel() {
+    val slides = listOf(
+        R.drawable.home_carousel_1 to R.string.home_highlight_1,
+        R.drawable.home_carousel_2 to R.string.home_highlight_2,
+        R.drawable.home_carousel_3 to R.string.home_highlight_3,
+    )
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Text(
+            stringResource(R.string.home_highlights_title),
+            style = androidx.compose.material3.MaterialTheme.typography.titleMedium,
+            color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface,
+        )
+        LazyRow(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            items(slides) { (image, caption) ->
+                val text = stringResource(caption)
+                Box(
+                    modifier = Modifier
+                        .width(280.dp)
+                        .height(150.dp)
+                        .clip(RoundedCornerShape(16.dp))
+                        .semantics { contentDescription = text },
+                ) {
+                    Image(
+                        painter = painterResource(image),
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.fillMaxSize(),
+                    )
+                    Text(
+                        text,
+                        color = androidx.compose.ui.graphics.Color.White,
+                        style = androidx.compose.material3.MaterialTheme.typography.titleSmall,
+                        modifier = Modifier
+                            .align(Alignment.BottomStart)
+                            .padding(12.dp),
+                    )
+                }
             }
         }
     }
