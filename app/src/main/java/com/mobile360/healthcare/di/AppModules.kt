@@ -27,13 +27,14 @@ import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 import com.mobile360.healthcare.data.FeedbackRepository
 import com.mobile360.healthcare.data.FeedbackRepositoryImpl
+import com.mobile360.healthcare.data.local.MIGRATION_1_2
 
 @Module
 @InstallIn(SingletonComponent::class)
 object DatabaseModule {
     @Provides @Singleton
     fun database(@ApplicationContext context: Context): AppDatabase =
-        Room.databaseBuilder(context, AppDatabase::class.java, "careconnect.db").fallbackToDestructiveMigration().build()
+        Room.databaseBuilder(context, AppDatabase::class.java, "careconnect.db").addMigrations(MIGRATION_1_2).fallbackToDestructiveMigration().build()
 
     @Provides
     fun dao(db: AppDatabase): CareDao = db.dao()
