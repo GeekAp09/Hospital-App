@@ -43,7 +43,7 @@ interface AuthRepository {
 interface AccountRepository {
 /** CR-007: stored accent choice id. */
 val accent: Flow<String> get() = kotlinx.coroutines.flow.flowOf("default")
-suspend fun setAccent(choice: String) {}
+suspend fun setAccent(choice: String) { throw UnsupportedOperationException("Accent '$choice' is not supported") }
 
     val alertPrefs: Flow<AlertPrefs>
     suspend fun setAlert(kind: AlertKind, enabled: Boolean)
