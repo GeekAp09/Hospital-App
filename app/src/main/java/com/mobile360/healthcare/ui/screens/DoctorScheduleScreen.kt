@@ -98,6 +98,8 @@ fun DoctorScheduleScreen(
     val count = scheduled.size + pending.size
 
     Column(Modifier.fillMaxSize().background(cs.background)) {
+        // CR-004: first-visit consent dialog
+        ConsentGate()
         Row(
             Modifier.fillMaxWidth().height(56.dp).background(cs.surface).padding(horizontal = 16.dp),
             verticalAlignment = Alignment.CenterVertically

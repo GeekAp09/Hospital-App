@@ -51,6 +51,11 @@ interface AccountRepository {
         // CR-002: light/dark theme preference
         val darkTheme: Flow<Boolean> get() = kotlinx.coroutines.flow.flowOf(false)
         suspend fun setDarkTheme(enabled: Boolean) {}
+
+    // CR-004: consent record
+    val consentAccepted: Flow<Boolean>
+
+    suspend fun acceptConsent()
 }
 
 interface DoctorRepository {

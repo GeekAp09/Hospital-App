@@ -115,4 +115,11 @@ suspend fun clearSession() {
         suspend fun saveDarkTheme(enabled: Boolean) {
             ds.edit { it[booleanPreferencesKey("dark_theme")] = enabled }
         }
+
+    // CR-004: consent is kept outside clearSession so it survives sign-out
+    val consentAccepted: Flow<Boolean> = ds.data.map { it[booleanPreferencesKey("consent_accepted")] ?: false }
+
+    suspend fun saveConsent() {
+        ds.edit { it[booleanPreferencesKey("consent_accepted")] = true }
+    }
 }

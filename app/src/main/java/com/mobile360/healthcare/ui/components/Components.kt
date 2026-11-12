@@ -444,3 +444,32 @@ fun CareTextField(
         )
     )
 }
+
+/** CR-004: blocking consent dialog; neither back nor an outside tap dismisses it. */
+@androidx.compose.runtime.Composable
+fun ConsentDialog(onAccept: () -> Unit, onDecline: () -> Unit) {
+    androidx.compose.material3.AlertDialog(
+        onDismissRequest = {},
+        properties = androidx.compose.ui.window.DialogProperties(
+            dismissOnBackPress = false,
+            dismissOnClickOutside = false,
+        ),
+        title = { androidx.compose.material3.Text("Consent and privacy policy") },
+        text = {
+            androidx.compose.material3.Text(
+                "We use your health data on this device to run your care, and send appointment alerts. " +
+                    "By agreeing you accept the Terms of Service and Privacy Policy.",
+            )
+        },
+        confirmButton = {
+            androidx.compose.material3.TextButton(onClick = onAccept) {
+                androidx.compose.material3.Text("I agree")
+            }
+        },
+        dismissButton = {
+            androidx.compose.material3.TextButton(onClick = onDecline) {
+                androidx.compose.material3.Text("Decline")
+            }
+        },
+    )
+}

@@ -28,6 +28,10 @@ class Us044ThemeToggleTest {
             if (fail) throw IllegalStateException("disk full")
             theme.value = enabled
         }
+
+        override val consentAccepted: Flow<Boolean> = MutableStateFlow(true)
+
+        override suspend fun acceptConsent() {}
     }
 
     @Test

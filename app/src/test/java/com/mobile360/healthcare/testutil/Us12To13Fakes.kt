@@ -76,6 +76,14 @@ class StubAccount : AccountRepository {
         deleted = true
         return Outcome.ok("Deletion requested", null)
     }
+
+    val consent = kotlinx.coroutines.flow.MutableStateFlow(false)
+
+    override val consentAccepted: kotlinx.coroutines.flow.Flow<Boolean> = consent
+
+    override suspend fun acceptConsent() {
+        consent.value = true
+    }
 }
 
 fun rxView(id: String, issued: Long, doctor: String = "Dr. Arun Rao") = PrescriptionView(

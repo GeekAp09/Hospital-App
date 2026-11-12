@@ -270,6 +270,11 @@ class AccountRepositoryImpl @Inject constructor(
         override val darkTheme: Flow<Boolean> = store.darkTheme
 
         override suspend fun setDarkTheme(enabled: Boolean) = store.saveDarkTheme(enabled)
+
+    // CR-004: consent record
+    override val consentAccepted: Flow<Boolean> = store.consentAccepted
+
+    override suspend fun acceptConsent() = store.saveConsent()
 }
 
 @Singleton

@@ -1,0 +1,22 @@
+# CR-004: consent dialog on first home visit
+appId: com.mobile360.healthcare
+---
+- launchApp:
+    clearState: true
+- tapOn: "Continue with mobile number"
+- tapOn: "Mobile phone number"
+- inputText: "9876543210"
+- tapOn: "Send code"
+- tapOn: "Enter 6-digit code"
+- inputText: "123456"
+- tapOn: "Confirm"
+- assertVisible: "Consent and privacy policy"
+- assertVisible: "I agree"
+- back
+- assertVisible: "Consent and privacy policy"
+- tapOn: "I agree"
+- assertNotVisible: "Consent and privacy policy"
+- assertVisible: "Clinical Hub"
+- launchApp
+- assertNotVisible: "Consent and privacy policy"
+- assertVisible: "Clinical Hub"
