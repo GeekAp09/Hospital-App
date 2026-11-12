@@ -75,6 +75,10 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.mobile360.healthcare.R
 import com.mobile360.healthcare.ui.theme.AppColors
+import androidx.compose.ui.layout.layout
+import androidx.compose.material.icons.filled.KeyboardArrowUp
+import kotlinx.coroutines.launch
+import androidx.compose.runtime.getValue
 
 // ---- Top bars ----
 
@@ -443,4 +447,35 @@ fun CareTextField(
             focusedLabelColor = AppColors.primary
         )
     )
+}
+
+/** CR-005: true once the list has scrolled past its first item. */
+fun showScrollToTop(firstVisibleItemIndex: Int): Boolean = firstVisibleItemIndex > 0
+
+/**
+ * CR-005: "Back to top" button for long lists. Place it right after the list in its Column;
+ * it takes no height and floats over the bottom-end corner of the list.
+ */
+@Composable
+fun ScrollToTopButton(listState: androidx.compose.foundation.lazy.LazyListState, modifier: Modifier = Modifier) {
+    val visible by androidx.compose.runtime.remember {
+        androidx.compose.runtime.derivedStateOf { showScrollToTop(listState.firstVisibleItemIndex) }
+    }
+    val scope = androidx.compose.runtime.rememberCoroutineScope()
+    androidx.compose.animation.AnimatedVisibility(
+        visible = visible,
+        modifier = modifier.layout { measurable, constraints ->
+            val placeable = measurable.measure(constraints.copy(minWidth = 0, minHeight = 0))
+            val margin = 16.dp.roundToPx()
+            layout(constraints.maxWidth, 0) {
+                placeable.place(constraints.maxWidth - placeable.width - margin, -placeable.height - margin)
+            }
+        },
+    ) {
+        androidx.compose.material3.ExtendedFloatingActionButton(
+            onClick = { scope.launch { listState.animateScrollToItem(0) } },
+            icon = { androidx.compose.material3.Icon(androidx.compose.material.icons.Icons.Filled.KeyboardArrowUp, contentDescription = null) },
+            text = { androidx.compose.material3.Text("Back to top") },
+        )
+    }
 }

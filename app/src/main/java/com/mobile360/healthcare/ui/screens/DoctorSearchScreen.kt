@@ -61,6 +61,8 @@ import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Locale
+import androidx.compose.foundation.lazy.rememberLazyListState
+import com.mobile360.healthcare.ui.components.ScrollToTopButton
 
 private val slotFormat: DateTimeFormatter = DateTimeFormatter.ofPattern("EEE, hh:mm a", Locale.getDefault())
 
@@ -72,7 +74,8 @@ fun DoctorSearchScreen(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val cs = MaterialTheme.colorScheme
-    Column(Modifier.fillMaxSize().background(cs.background)) {
+    val doctorListState = rememberLazyListState()
+Column(Modifier.fillMaxSize().background(cs.background)) {
         Row(Modifier.fillMaxWidth().height(56.dp).background(cs.surface).padding(horizontal = 8.dp), verticalAlignment = Alignment.CenterVertically) {
             IconButton(onClick = onBack, modifier = Modifier.size(48.dp)) {
                 Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Go back")
@@ -146,11 +149,13 @@ fun DoctorSearchScreen(
             }
             else -> LazyColumn(
                 Modifier.fillMaxSize(), contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 16.dp, vertical = 4.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
+                verticalArrangement = Arrangement.spacedBy(12.dp), state = doctorListState
             ) {
                 items(state.doctors, key = { it.doctor.id }) { item -> DoctorCard(item, onOpenDoctorProfileAndBooking) }
             }
         }
+    // CR-005: back to top
+    ScrollToTopButton(doctorListState)
     }
 }
 

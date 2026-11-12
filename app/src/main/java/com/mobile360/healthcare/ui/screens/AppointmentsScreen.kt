@@ -62,6 +62,8 @@ import com.mobile360.healthcare.ui.components.PersonAvatar
 import com.mobile360.healthcare.ui.components.StatusBadge
 import com.mobile360.healthcare.ui.theme.AppColors
 import com.mobile360.healthcare.util.Formats
+import androidx.compose.foundation.lazy.rememberLazyListState
+import com.mobile360.healthcare.ui.components.ScrollToTopButton
 
 @Composable
 fun AppointmentsScreen(
@@ -83,7 +85,8 @@ fun AppointmentsScreen(
     val upcoming = list.orEmpty().filter { viewModel.isUpcoming(it, now) }.sortedBy { it.startMillis }
     val past = list.orEmpty().filter { !viewModel.isUpcoming(it, now) }.sortedByDescending { it.startMillis }
 
-    Column(Modifier.fillMaxSize().background(AppColors.background)) {
+    val appointmentsListState = rememberLazyListState()
+Column(Modifier.fillMaxSize().background(AppColors.background)) {
         BrandTopBar(actions = {
             IconButton(onClick = { showBell = true }) {
                 Icon(Icons.Filled.Notifications, contentDescription = "Notifications")
@@ -121,7 +124,7 @@ fun AppointmentsScreen(
             else -> LazyColumn(
                 Modifier.weight(1f),
                 contentPadding = androidx.compose.foundation.layout.PaddingValues(16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                verticalArrangement = Arrangement.spacedBy(16.dp), state = appointmentsListState
             ) {
                 items(shown, key = { it.id }) { a ->
                     if (showPast) {
@@ -148,6 +151,8 @@ fun AppointmentsScreen(
                 }
             }
         }
+    // CR-005: back to top
+    ScrollToTopButton(appointmentsListState)
     }
 
     cancelTarget?.let { id ->

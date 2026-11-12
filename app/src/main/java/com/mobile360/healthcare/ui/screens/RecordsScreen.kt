@@ -30,6 +30,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mobile360.healthcare.data.local.TimelineEntity
 import com.mobile360.healthcare.data.model.TimelineType
 import kotlinx.coroutines.launch
+import androidx.compose.foundation.lazy.rememberLazyListState
+import com.mobile360.healthcare.ui.components.ScrollToTopButton
 
 @Composable
 fun RecordsScreen(
@@ -58,7 +60,9 @@ fun RecordsScreen(
         }
     }
 
-    Scaffold(
+    val prescriptionsListState = rememberLazyListState()
+val timelineListState = rememberLazyListState()
+Scaffold(
         contentWindowInsets = WindowInsets(0),
         containerColor = MaterialTheme.colorScheme.background,
         snackbarHost = { SnackbarHost(snackbar) }
@@ -110,7 +114,7 @@ fun RecordsScreen(
                 }
                 tab == 0 -> LazyColumn(
                     Modifier.fillMaxSize(), contentPadding = PaddingValues(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                    verticalArrangement = Arrangement.spacedBy(12.dp), state = prescriptionsListState
                 ) {
                     item {
                         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
@@ -179,7 +183,7 @@ fun RecordsScreen(
                 else -> {
                     LazyColumn(
                         Modifier.fillMaxSize(), contentPadding = PaddingValues(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(16.dp)
+                        verticalArrangement = Arrangement.spacedBy(16.dp), state = timelineListState
                     ) {
                         item {
                             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
@@ -227,6 +231,8 @@ fun RecordsScreen(
                             }
                         }
                     }
+                    // CR-005: back to top
+                    ScrollToTopButton(if (viewModel.tab.collectAsStateWithLifecycle().value == 0) prescriptionsListState else timelineListState)
                 }
             }
         }
