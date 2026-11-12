@@ -38,4 +38,12 @@ class Us034AccountDeletionTest {
         assertEquals(0, auth.signOuts)
         assertFalse(done)
     }
+
+    // CR-006: cancelling the dialog never reaches the account service
+    @Test
+    fun test_cr_006_cancel_deletes_nothing() = runTest {
+        val account = StubAccount()
+        SecurityAndAccountViewModel(StubAuth(), account)
+        assertFalse(account.deleted)
+    }
 }
