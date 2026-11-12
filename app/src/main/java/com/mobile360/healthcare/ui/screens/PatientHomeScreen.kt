@@ -388,3 +388,6 @@ private fun HomeImageCarousel() {
         }
     }
 }
+
+// CR-002: horizontally scrollable placeholder image carousel
+
