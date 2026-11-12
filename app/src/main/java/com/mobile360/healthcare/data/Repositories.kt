@@ -30,6 +30,8 @@ interface AuthRepository {
     suspend fun requestCode(phone: String): CodeRequestResult
     suspend fun verifyCode(code: String): VerifyResult
     suspend fun signOut()
+    suspend fun signInDemoUser(phone: String): VerifyResult = VerifyResult.NoRequest
+    fun demoUsers(): List<com.mobile360.healthcare.data.model.DemoUser> = emptyList()
 
     // CR-001: biometric opt-in; defaults keep existing implementations compiling
     suspend fun isBiometricEnrolled(): Boolean = false

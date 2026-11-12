@@ -9,6 +9,11 @@ object AppConfig {
     const val DEMO_CODE = "123456"
     const val DEMO_PATIENT_PHONE = "9876543210"
     const val DEMO_DOCTOR_PHONE = "9876500001"
+    const val DEMO_PRIYA_PHONE = "9876500002"
+    const val DEMO_RAHUL_PHONE = "9876500003"
+    const val DEMO_ANANYA_PHONE = "9876500004"
+    const val DEMO_KARAN_PHONE = "9876500005"
+    const val DEMO_DOCTOR_RAO_PHONE = "9876500006"
     const val COUNTRY_CODE = "+91"
 
     const val CODE_VALID_MS = 5 * 60_000L

@@ -80,7 +80,12 @@ fun AppNavHost(startDestination: String, role: Role?) {
             composable(Routes.PHONE_ENTRY) {
                 PhoneEntryScreen(
                     onOpenOTPEntry = { nav.navigate(Routes.O_T_P_ENTRY) },
-                    onBack = { nav.popBackStack() }
+                    onBack = { nav.popBackStack() },
+                    onSignedIn = {
+                        nav.navigate(Routes.homeFor(role)) {
+                            popUpTo(nav.graph.id) { inclusive = true }
+                        }
+                    }
                 )
             }
             composable(Routes.O_T_P_ENTRY) {

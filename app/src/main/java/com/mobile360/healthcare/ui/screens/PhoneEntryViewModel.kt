@@ -23,10 +23,32 @@ class PhoneEntryViewModel @Inject constructor(
     private val saved: SavedStateHandle
 ) : ViewModel() {
     val phone: StateFlow<String> = saved.getStateFlow("phone", "")
+    val demoUsers = auth.demoUsers()
     private val _state = MutableStateFlow(PhoneEntryState())
     val state: StateFlow<PhoneEntryState> = _state.asStateFlow()
     private val _issued = Channel<Unit>(Channel.BUFFERED)
     val issued = _issued.receiveAsFlow()
+
+    fun selectDemoUser(user: com.mobile360.healthcare.data.model.DemoUser) {
+        onPhoneChange(user.phone)
+    }
+
+    fun signInDemo(phone: String, onSignedIn: (com.mobile360.healthcare.data.model.Role) -> Unit) {
+        if (_state.value.loading) return
+        val digits = phone.filter { it.isDigit() }.takeLast(10)
+        _state.value = PhoneEntryState(loading = true)
+        viewModelScope.launch {
+            when (val r = auth.signInDemoUser(digits)) {
+                is com.mobile360.healthcare.data.model.VerifyResult.Success -> {
+                    _state.value = PhoneEntryState()
+                    onSignedIn(r.role)
+                }
+                else -> {
+                    _state.value = PhoneEntryState(error = "Unable to sign in as demo user.")
+                }
+            }
+        }
+    }
 
     fun onPhoneChange(text: String) {
         val digits = text.filter { it.isDigit() }.take(10)

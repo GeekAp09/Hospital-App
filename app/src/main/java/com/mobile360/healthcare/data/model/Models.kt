@@ -77,3 +77,14 @@ object TimelineType {
 
 // CR-001: outcome of restoring a session after a biometric check
 enum class BiometricSignInResult { SIGNED_IN, NOT_ENROLLED, ACCOUNT_MISSING }
+
+data class DemoUser(
+    val id: String,
+    val name: String,
+    val role: Role,
+    val phone: String,
+    val title: String,
+    val description: String,
+    val highlights: List<String>,
+    val imageRes: Int = 0
+)

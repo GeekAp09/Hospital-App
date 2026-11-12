@@ -108,6 +108,94 @@ class AuthRepositoryImpl @Inject constructor(
 
 override suspend fun signOut() = store.clearSession()
 
+    override fun demoUsers(): List<com.mobile360.healthcare.data.model.DemoUser> = listOf(
+        com.mobile360.healthcare.data.model.DemoUser(
+            id = "maya",
+            name = "Maya Sharma",
+            role = Role.PATIENT,
+            phone = AppConfig.DEMO_PATIENT_PHONE,
+            title = "Cardiology Patient • Full Medical History",
+            description = "Active patient with upcoming visit, 2 prescriptions, full clinical timeline, and active doctor chat.",
+            highlights = listOf(
+                "Upcoming follow-up visit with Dr. Arun Rao",
+                "2 Prescriptions (Atorvastatin 10mg, Aspirin 75mg)",
+                "Full Timeline (Prescriptions, Notes, Lipid Labs)",
+                "Active messaging threads with Dr. Rao and Dr. Khan"
+            ),
+            imageRes = com.mobile360.healthcare.R.drawable.a_warm_professional_portrait_photograph
+        ),
+        com.mobile360.healthcare.data.model.DemoUser(
+            id = "meera",
+            name = "Dr. Meera Iyer",
+            role = Role.DOCTOR,
+            phone = AppConfig.DEMO_DOCTOR_PHONE,
+            title = "Cardiology Specialist • Daily OPD Schedule",
+            description = "Cardiologist with 4 patient appointments today, pending booking requests (accept/reject), consultations & notes.",
+            highlights = listOf(
+                "Daily OPD schedule with 4 patient appointments",
+                "Pending booking request from Rahul Mehta (Accept / Reject)",
+                "Clinical consultation notes & issue new prescriptions",
+                "Weekly availability & slot management"
+            ),
+            imageRes = com.mobile360.healthcare.R.drawable.close_up_portrait_photograph_of_a_welcom
+        ),
+        com.mobile360.healthcare.data.model.DemoUser(
+            id = "priya",
+            name = "Priya Nair",
+            role = Role.PATIENT,
+            phone = AppConfig.DEMO_PRIYA_PHONE,
+            title = "Cardiac Recovery Patient • Confirmed Visit Today",
+            description = "Patient with confirmed 9:00 AM appointment today with Dr. Meera, echocardiogram lab report, and prescriptions.",
+            highlights = listOf(
+                "Confirmed appointment today at 9:00 AM in Room 302",
+                "Active cardiac prescriptions with dosage & refills",
+                "Echocardiogram & Cardiac Doppler lab report in timeline",
+                "Live chat conversation with Dr. Meera"
+            ),
+            imageRes = com.mobile360.healthcare.R.drawable.portrait_photograph_of_priya_nair_an_ind
+        ),
+        com.mobile360.healthcare.data.model.DemoUser(
+            id = "rahul",
+            name = "Rahul Mehta",
+            role = Role.PATIENT,
+            phone = AppConfig.DEMO_RAHUL_PHONE,
+            title = "Cardiac Care Patient • Pending Booking Request",
+            description = "Patient with pending appointment request, emergency referral notes from Dr. Kulkarni, and active medications.",
+            highlights = listOf(
+                "Pending appointment request awaiting doctor confirmation",
+                "Urgent referral note & resting ECG from Dr. Kulkarni",
+                "Active medications (Metoprolol Succinate, Nitroglycerin)",
+                "Chat thread inquiring about consultation approval"
+            ),
+            imageRes = com.mobile360.healthcare.R.drawable.portrait_photography_of_rahul_mehta_an_a
+        ),
+        com.mobile360.healthcare.data.model.DemoUser(
+            id = "rao",
+            name = "Dr. Arun Rao",
+            role = Role.DOCTOR,
+            phone = AppConfig.DEMO_DOCTOR_RAO_PHONE,
+            title = "Chief Senior Cardiologist • Lead Physician",
+            description = "Lead specialist with upcoming follow-up appointments, clinical consultation notes, and patient messaging.",
+            highlights = listOf(
+                "Lead physician OPD schedule with follow-ups & second opinions",
+                "Clinical consultation notes & history for Maya Sharma",
+                "Prescription issuance & review across cardiology patients",
+                "Active patient messaging thread with Maya Sharma"
+            ),
+            imageRes = com.mobile360.healthcare.R.drawable.a_headshot_portrait_of_dr_arun_rao_an_ex
+        )
+    )
+
+    override suspend fun signInDemoUser(phone: String): VerifyResult {
+        val digits = phone.filter { it.isDigit() }.takeLast(10)
+        seeder.ensureSeeded()
+        val account = dao.accountByPhone(digits) ?: return VerifyResult.NoRequest
+        store.save(account)
+        failures = 0
+        pendingPhone = null
+        return VerifyResult.Success(Role.valueOf(account.role))
+    }
+
         // CR-001: biometric opt-in and session restore
         override suspend fun isBiometricEnrolled(): Boolean = store.biometricAccountId() != null
 
