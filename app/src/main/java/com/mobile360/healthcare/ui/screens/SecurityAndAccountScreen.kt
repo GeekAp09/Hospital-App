@@ -82,7 +82,7 @@ fun SecurityAndAccountScreen(
                     when (pending) {
                         Pending.DEVICES -> Text("Other sessions of this account will be revoked in the demo service.")
                         Pending.PHONE -> Text("Enter the code to verify the new number.")
-                        else -> Text("This permanently removes your records from this phone. Enter a fresh code to confirm.")
+                        else -> Text("This permanently removes your records from this phone. This action is permanent and cannot be undone. Enter a fresh code to confirm.")
                     }
                     if (pending != Pending.DEVICES) {
                         OutlinedTextField(

@@ -263,7 +263,7 @@ class AccountRepositoryImpl @Inject constructor(
             dao.deleteAccount(s.userId)
         }
         store.clearSession()
-        return Outcome.ok("Deletion request submitted. Local data was cleared.").also { store.clearBiometricAccountId() /* CR-001 */ }
+        return Outcome.ok("Account and data permanently erased from this device.").also { store.clearBiometricAccountId() /* CR-001 */ }
     }
 
         // CR-002
