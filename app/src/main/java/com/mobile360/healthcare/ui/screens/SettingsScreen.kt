@@ -49,6 +49,8 @@ import com.mobile360.healthcare.data.model.Role
 
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.material.icons.filled.DarkMode
+import com.mobile360.healthcare.ui.theme.AccentChoice
+import androidx.compose.foundation.horizontalScroll
 private const val SUPPORT_NUMBER = "1800123456"
 
 @Composable
@@ -158,6 +160,11 @@ fun SettingsScreen(
                 "Use the dark colour scheme",
                 viewModel.darkTheme.collectAsStateWithLifecycle().value
             ) { viewModel.setDarkTheme(it) }
+            // CR-007: accent colour picker
+            AccentPicker(
+                selected = AccentChoice.fromId(viewModel.accent.collectAsStateWithLifecycle().value),
+                onSelect = { viewModel.setAccent(it.id) },
+            )
             SectionLabel("Account Privacy")
             Card(colors = CardDefaults.cardColors(containerColor = scheme.surfaceContainerLowest), shape = MaterialTheme.shapes.large) {
                 LinkRow(Icons.Filled.Shield, "Security and account", "Device safety, mobile number, account security", onOpenSecurityAndAccount)
@@ -227,5 +234,33 @@ private fun LinkRow(icon: ImageVector, title: String, sub: String, onClick: () -
             Text(sub, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
         Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, null, tint = MaterialTheme.colorScheme.outline)
+    }
+}
+
+/** CR-007: accent options as labelled chips; "Match system" needs Android 12+. */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun AccentPicker(selected: AccentChoice, onSelect: (AccentChoice) -> Unit) {
+    val dynamicOk = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Text("Accent colour", style = MaterialTheme.typography.titleSmall)
+        Row(
+            modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            AccentChoice.entries.forEach { choice ->
+                val enabled = choice != AccentChoice.System || dynamicOk
+                FilterChip(
+                    selected = choice == selected,
+                    onClick = { onSelect(if (enabled) choice else AccentChoice.Default) },
+                    enabled = enabled,
+                    label = { Text(choice.label) },
+                )
+            }
+        }
+        if (!dynamicOk) {
+            Text("Needs Android 12 or newer", style = MaterialTheme.typography.bodySmall)
+        }
+        Text("Accent: ${selected.label}", style = MaterialTheme.typography.bodySmall)
     }
 }

@@ -31,6 +31,7 @@ import javax.inject.Inject
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
+import com.mobile360.healthcare.ui.theme.AccentTheme
 
 @AndroidEntryPoint
 class MainActivity : FragmentActivity() {
@@ -38,7 +39,12 @@ class MainActivity : FragmentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            CareConnectTheme(darkTheme = hiltViewModel<ThemeViewModel>().darkTheme.collectAsStateWithLifecycle().value) { AppRoot() }
+            val theme: ThemeViewModel = hiltViewModel()
+            val dark by theme.darkTheme.collectAsStateWithLifecycle()
+            val accent by theme.accent.collectAsStateWithLifecycle()
+            CareConnectTheme(dark) {
+                AccentTheme(accent, dark) { AppRoot() }
+            }
         }
     }
 }
@@ -64,4 +70,6 @@ fun AppRoot(viewModel: MainViewModel = hiltViewModel()) {
 class ThemeViewModel @Inject constructor(account: AccountRepository) : ViewModel() {
     val darkTheme: StateFlow<Boolean> =
         account.darkTheme.stateIn(viewModelScope, SharingStarted.Eagerly, false)
+
+    val accent: StateFlow<String> = account.accent.stateIn(viewModelScope, SharingStarted.Eagerly, "default")
 }

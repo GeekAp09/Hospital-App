@@ -270,6 +270,10 @@ class AccountRepositoryImpl @Inject constructor(
         override val darkTheme: Flow<Boolean> = store.darkTheme
 
         override suspend fun setDarkTheme(enabled: Boolean) = store.saveDarkTheme(enabled)
+
+    override val accent: Flow<String> = store.accent
+
+    override suspend fun setAccent(choice: String) = store.saveAccent(choice)
 }
 
 @Singleton

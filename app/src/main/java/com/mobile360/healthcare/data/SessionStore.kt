@@ -115,4 +115,11 @@ suspend fun clearSession() {
         suspend fun saveDarkTheme(enabled: Boolean) {
             ds.edit { it[booleanPreferencesKey("dark_theme")] = enabled }
         }
+
+    /** CR-007: accent choice id, kept outside clearSession so it survives sign-out. */
+    val accent: Flow<String> = ds.data.map { it[stringPreferencesKey("accent")] ?: "default" }
+
+    suspend fun saveAccent(choice: String) {
+        ds.edit { it[stringPreferencesKey("accent")] = choice }
+    }
 }

@@ -41,6 +41,10 @@ interface AuthRepository {
 }
 
 interface AccountRepository {
+/** CR-007: stored accent choice id. */
+val accent: Flow<String> get() = kotlinx.coroutines.flow.flowOf("default")
+suspend fun setAccent(choice: String) {}
+
     val alertPrefs: Flow<AlertPrefs>
     suspend fun setAlert(kind: AlertKind, enabled: Boolean)
     suspend fun reAuthenticate(code: String): Outcome

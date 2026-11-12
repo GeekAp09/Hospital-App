@@ -67,3 +67,23 @@ object AppDarkColors {
     val surface = Color(0xFF181C22)
     val onSurface = Color(0xFFE0E2EA)
 }
+
+/** CR-007: accent choices; ids are what the app stores. */
+enum class AccentChoice(
+    val id: String,
+    val label: String,
+    val lightPrimary: Color?,
+    val lightContainer: Color?,
+    val darkPrimary: Color?,
+    val darkContainer: Color?,
+) {
+    Default("default", "Default", null, null, null, null),
+    Teal("teal", "Teal", Color(0xFF00796B), Color(0xFFB2DFDB), Color(0xFF4DB6AC), Color(0xFF004D40)),
+    Purple("purple", "Purple", Color(0xFF6A1B9A), Color(0xFFE1BEE7), Color(0xFFCE93D8), Color(0xFF4A148C)),
+    Orange("orange", "Orange", Color(0xFFE65100), Color(0xFFFFE0B2), Color(0xFFFFB74D), Color(0xFFBF360C)),
+    System("system", "Match system", null, null, null, null);
+
+    companion object {
+        fun fromId(id: String?): AccentChoice = entries.firstOrNull { it.id == id } ?: Default
+    }
+}

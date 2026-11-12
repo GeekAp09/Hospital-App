@@ -5,6 +5,10 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.ui.graphics.Color
+import android.os.Build
+import androidx.compose.material3.dynamicDarkColorScheme
+import androidx.compose.material3.dynamicLightColorScheme
+import androidx.compose.ui.platform.LocalContext
 
 private val LightColors = lightColorScheme(
     primary = AppColors.primary,
@@ -78,3 +82,34 @@ private val CareConnectDarkColors = darkColorScheme(
     surfaceContainerHigh = Color(0xFF292A2F),
     surfaceContainerHighest = Color(0xFF34353A)
 )
+
+/** CR-007: applies the chosen accent over the current theme; "system" uses the dynamic palette on Android 12+. */
+@Composable
+fun AccentTheme(accent: String, darkTheme: Boolean, content: @Composable () -> Unit) {
+    val choice = AccentChoice.fromId(accent)
+    val base = MaterialTheme.colorScheme
+    val context = LocalContext.current
+    val scheme = when {
+        choice == AccentChoice.System && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S ->
+            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
+        choice.lightPrimary == null -> base
+        darkTheme -> base.copy(
+            primary = choice.darkPrimary!!,
+            onPrimary = Color.Black,
+            primaryContainer = choice.darkContainer!!,
+            onPrimaryContainer = Color.White,
+        )
+        else -> base.copy(
+            primary = choice.lightPrimary,
+            onPrimary = Color.White,
+            primaryContainer = choice.lightContainer!!,
+            onPrimaryContainer = Color.Black,
+        )
+    }
+    MaterialTheme(
+        colorScheme = scheme,
+        typography = MaterialTheme.typography,
+        shapes = MaterialTheme.shapes,
+        content = content,
+    )
+}

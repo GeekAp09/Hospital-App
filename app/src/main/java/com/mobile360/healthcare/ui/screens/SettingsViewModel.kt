@@ -50,4 +50,17 @@ class SettingsViewModel @Inject constructor(
                 }
             }
         }
+
+    /** CR-007: stored accent choice id; the picker follows it, so a failed save leaves it unchanged. */
+    val accent: StateFlow<String> = account.accent.stateIn(viewModelScope, SharingStarted.Eagerly, "default")
+
+    fun setAccent(choice: String) {
+        viewModelScope.launch {
+            try {
+                account.setAccent(choice)
+            } catch (e: Exception) {
+                report("Could not save this preference. Try again.")
+            }
+        }
+    }
 }
