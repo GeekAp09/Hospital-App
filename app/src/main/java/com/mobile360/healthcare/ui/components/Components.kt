@@ -75,6 +75,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.mobile360.healthcare.R
 import com.mobile360.healthcare.ui.theme.AppColors
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 
 // ---- Top bars ----
 
@@ -443,4 +445,29 @@ fun CareTextField(
             focusedLabelColor = AppColors.primary
         )
     )
+}
+
+// CR-003: small connectivity pill (dot + label) shown at the top right of every screen
+@Composable
+fun NetworkIndicator(online: Boolean, modifier: Modifier = Modifier) {
+    val label = androidx.compose.ui.res.stringResource(if (online) com.mobile360.healthcare.R.string.network_online else com.mobile360.healthcare.R.string.network_offline)
+    androidx.compose.material3.Surface(
+        modifier = modifier.semantics { contentDescription = label },
+        shape = RoundedCornerShape(50),
+        color = androidx.compose.material3.MaterialTheme.colorScheme.surface.copy(alpha = 0.9f),
+        tonalElevation = 2.dp,
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
+            verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
+        ) {
+            Box(
+                Modifier
+                    .size(8.dp)
+                    .background(if (online) androidx.compose.ui.graphics.Color(0xFF2E7D32) else androidx.compose.ui.graphics.Color(0xFFC62828), CircleShape)
+            )
+            Spacer(Modifier.width(6.dp))
+            androidx.compose.material3.Text(label, style = androidx.compose.material3.MaterialTheme.typography.labelSmall)
+        }
+    }
 }

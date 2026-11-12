@@ -15,4 +15,6 @@
     <string name="biometric_enable_title">Enable biometric sign-in</string>
     <string name="biometric_sign_in_failed">Biometric sign-in failed. Use your phone number instead.</string>
     <string name="biometric_unavailable">Set up a fingerprint, face or screen lock on this device to use biometric sign-in.</string>
+    <string name="network_online">Online</string>
+    <string name="network_offline">Offline</string>
 </resources>

@@ -31,6 +31,8 @@ import javax.inject.Inject
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
+import androidx.compose.foundation.layout.padding
+import androidx.compose.ui.unit.dp
 
 @AndroidEntryPoint
 class MainActivity : FragmentActivity() {
@@ -53,6 +55,11 @@ fun AppRoot(viewModel: MainViewModel = hiltViewModel()) {
                 else -> {
                     val start = remember { Routes.startFor((s as? AppState.SignedIn)?.role) }
                     AppNavHost(startDestination = start, role = (s as? AppState.SignedIn)?.role)
+                    // CR-003: network indicator, top right
+                    com.mobile360.healthcare.ui.components.NetworkIndicator(
+                        online = hiltViewModel<NetworkStatusViewModel>().online.collectAsStateWithLifecycle().value,
+                        modifier = Modifier.align(Alignment.TopEnd).padding(top = 2.dp, end = 4.dp),
+                    )
                 }
             }
         }
@@ -64,4 +71,16 @@ fun AppRoot(viewModel: MainViewModel = hiltViewModel()) {
 class ThemeViewModel @Inject constructor(account: AccountRepository) : ViewModel() {
     val darkTheme: StateFlow<Boolean> =
         account.darkTheme.stateIn(viewModelScope, SharingStarted.Eagerly, false)
+}
+
+// CR-003: exposes connectivity for the global network indicator
+@dagger.hilt.android.lifecycle.HiltViewModel
+class NetworkStatusViewModel @javax.inject.Inject constructor(
+    connectivity: com.mobile360.healthcare.data.ConnectivityObserver,
+) : ViewModel() {
+    val online: kotlinx.coroutines.flow.StateFlow<Boolean> = connectivity.online.stateIn(
+        viewModelScope,
+        kotlinx.coroutines.flow.SharingStarted.WhileSubscribed(5_000),
+        connectivity.isOnlineNow(),
+    )
 }
